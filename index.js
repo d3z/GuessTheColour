@@ -13,19 +13,18 @@
 
 
     // application endpoints
-    app.get('/open_round', function(req, res) {
-        send_to_all_users('open_round');
+    app.get('/new_round', function(req, res) {
+        start_new_round();
         res.status(200).send('OK');
     });
 
     app.get('/close_round', function(req, res) {
-        send_to_all_users('close_round');
+        close_round();
         res.status(200).send('OK');
     });
 
     app.get('/finish_round', function(req, res) {
-        var color = choose_color();
-        send_color_to_all_users(color);
+        send_result_to_all_users();
         res.status(200).send('OK');
     });
 
@@ -44,18 +43,23 @@
 
 
     // map of username to socket
-    var users = {}
+    var users = {};
+
+    // map of colour to user
+    var guesses;
 
     // fake socket returned when a non-existing socket is requested
-    var fake_socket = {emit: function(evt, data){}}
+    var fake_socket = {emit: function(evt, data){}};
 
 
     // helper functions
-    Array.prototype.remove = function(val) {
-        var ind = this.indexOf(val);
-        if (ind != -1) {
-            delete(this[ind]);
-        }
+    function start_new_round() {
+        guesses = {};
+        send_to_all_users('round', {'state':'open'});
+    }
+
+    function close_round() {
+        send_to_all_users('round', {'state':'closed'});
     }
 
     function add_socket_for_user(user, socket) {
@@ -77,11 +81,17 @@
         }
     }
 
-    function send_color_to_all_users(colour) {
-        send_to_all_users('colour', {colour:colour});
+    function send_result_to_all_users() {
+        var colour = choose_colour();
+        var winner = who_got_closest(colour);
+        send_to_all_users('result', {winner: winner, colour:colour});
     }
 
     function choose_color() {
+        return '#' + (Math.random() * 0XFFFFFF << 0).toString(16);
+    }
+
+    function who_got_closest(colour) {
     }
 
 

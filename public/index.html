@@ -10,6 +10,9 @@
                 font-size: 1.2em;
                 font-family: 'Oxygen', sans-serif;
             }
+            body.closed {
+                border: solid 5px #F00;
+            }
             header h1 {
                 font-family: 'Lobster', cursive;
                 margin-bottom: 30px;
@@ -66,10 +69,12 @@
 
                 socket.on('round', function(data) {
                     if (data.state === 'open') {
-                        $('#colour_chooser').enable();
+                        $('#colour_chooser').spectrum('enable');
+                        $('body').removeClass('closed');
                     }
                     else if (data.state === 'closed') {
-                        $('#colour_chooser').disable();
+                        $('#colour_chooser').spectrum('disable');
+                        $('body').addClass('closed');
                     }
                 });
 
