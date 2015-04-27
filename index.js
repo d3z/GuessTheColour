@@ -34,14 +34,12 @@
     io.on('connection', function(socket) {
         socket.on('register', function(data) {
             var user = data.username;
-            console.log('We have a new user:', user);
             add_socket_for_user(user, socket);
             socket.emit('registered', {'username': user});
         });
     });
 
     io.on('disconnect', function(socket) {
-        console.log('Losing a connection');
     });
 
 

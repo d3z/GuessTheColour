@@ -1,0 +1,19 @@
+{
+  "name": "guess_the_colour",
+  "main": "index.js",
+  "version": "0.0.1",
+  "authors": [
+    "Gareth Fleming"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "spectrum": "~1.7.0"
+  }
+}
