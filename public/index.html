@@ -1,0 +1,107 @@
+<!doctype html>
+
+<html>
+    <head>
+        <title>Guess the Colour (with added Websockets)</title>
+        <link href='http://fonts.googleapis.com/css?family=Lobster|Oxygen' rel='stylesheet' type='text/css'>
+        <style type="text/css">
+            body {
+                padding: 30px;
+                font-size: 1.2em;
+                font-family: 'Oxygen', sans-serif;
+            }
+            header h1 {
+                font-family: 'Lobster', cursive;
+                margin-bottom: 30px;
+            }
+            #username_txt {
+                font-size: 1.2em;
+                padding: 10px;
+            }
+            #username_lbl {
+                margin-right: 20px;
+            }
+            #server_colour {
+                height: 300px;
+                width: 300px;
+                position: absolute;
+                left: 25%;
+                top: 25%;
+                background-color: #fff;
+            }
+        </style>
+        <script src="https://code.jquery.com/jquery-2.1.3.min.js"></script>
+        <script src="spectrum.js"></script>
+        <link rel="stylesheet" href="spectrum.css"/>
+        <script src="/socket.io/socket.io.js"></script>
+    </head>
+
+    <body>
+        <header>
+            <h1>Guess the Colour</h1>
+        </header>
+        <div id="username">
+            <input id="username_txt" placeholder="Enter a username and press return" size="40" autofocus/>
+        </div>
+        <div id="registered_user">
+            <span id="username_lbl"></span>
+            <input id="colour_chooser"></input>
+        </div>
+        <div id="server_colour"></div>
+            
+        </div>
+
+        <script>
+            var username;
+            $(function() {
+                $('#registered_user').hide();
+                $('#server_colour').hide();
+              
+                var socket = io.connect('http://localhost:4000');
+                socket.on('registered', function(data) {
+                    $('#username').hide();
+                    $('#username_lbl').text('Make your guess ' + data.username);
+                    $('#registered_user').show();
+                });
+
+                socket.on('round', function(data) {
+                    if (data.state === 'open') {
+                        $('#colour_chooser').enable();
+                    }
+                    else if (data.state === 'closed') {
+                        $('#colour_chooser').disable();
+                    }
+                });
+
+                socket.on('result', function(data) {
+                    var colour = data.colour;
+                    var winner = data.winner;
+                    $('#server_colour').css('background-color', colour);
+                    $('#server_colour').show();
+                    display_winner(winner);
+                });
+
+                $('#colour_chooser').spectrum({
+                    showButtons: false,
+                    move: function(color) {
+                        var colour = color.toHexString();
+                        $('body').css('background-color', colour);
+                    }
+                });
+
+                $('#username_txt').keyup(function(event){
+                    if (event.which == 13) {
+                        username = $(this).val();
+                        socket.emit('register', {'username': username});
+                    }
+                });
+
+                $('#colour_chooser').change(function() {
+                });
+
+                function display_winner(winner) {
+                }
+            });
+        </script>
+    </body>
+</html>
