@@ -91,6 +91,10 @@
                     move: function(color) {
                         var colour = color.toHexString();
                         $('body').css('background-color', colour);
+                    },
+                    change: function(color) {
+                        var colour = color.toHexString();
+                        socket.emit('guess', {'username': username, 'colour': colour});
                     }
                 });
 
@@ -99,9 +103,6 @@
                         username = $(this).val();
                         socket.emit('register', {'username': username});
                     }
-                });
-
-                $('#colour_chooser').change(function() {
                 });
 
                 function display_winner(winner) {

@@ -36,6 +36,10 @@
             add_socket_for_user(user, socket);
             socket.emit('registered', {'username': user});
         });
+        socket.on('guess', function(data) {
+            guesses[data.username] = data.colour;
+            console.log(guesses);
+        });
     });
 
     io.on('disconnect', function(socket) {
@@ -46,7 +50,7 @@
     var users = {};
 
     // map of colour to user
-    var guesses;
+    var guesses = {}; 
 
     // fake socket returned when a non-existing socket is requested
     var fake_socket = {emit: function(evt, data){}};
