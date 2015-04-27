@@ -10,9 +10,6 @@
                 font-size: 1.2em;
                 font-family: 'Oxygen', sans-serif;
             }
-            body.closed {
-                border: solid 5px #F00;
-            }
             header h1 {
                 font-family: 'Lobster', cursive;
                 margin-bottom: 30px;
@@ -25,12 +22,17 @@
                 margin-right: 20px;
             }
             #server_colour {
-                height: 300px;
-                width: 300px;
+                height: 200px;
+                width: 200px;
+                margin-top: 20px;
+                position: relative;
+            }
+            #winner {
+                font-size: 1em;   
                 position: absolute;
-                left: 25%;
-                top: 25%;
-                background-color: #fff;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
             }
         </style>
         <script src="bower/jquery/dist/jquery.min.js"></script>
@@ -50,7 +52,9 @@
             <span id="username_lbl"></span>
             <input id="colour_chooser"></input>
         </div>
-        <div id="server_colour"></div>
+        <div id="server_colour">
+            <div id="winner"></div>
+        </div>
             
         </div>
 
@@ -70,20 +74,17 @@
                 socket.on('round', function(data) {
                     if (data.state === 'open') {
                         $('#colour_chooser').spectrum('enable');
-                        $('body').removeClass('closed');
                     }
                     else if (data.state === 'closed') {
                         $('#colour_chooser').spectrum('disable');
-                        $('body').addClass('closed');
                     }
                 });
 
                 socket.on('result', function(data) {
                     var colour = data.colour;
                     var winner = data.winner;
-                    $('#server_colour').css('background-color', colour);
-                    $('#server_colour').show();
-                    display_winner(winner);
+                    console.log("WINNER", winner, colour);
+                    display_winner(winner, colour);
                 });
 
                 $('#colour_chooser').spectrum({
@@ -105,7 +106,17 @@
                     }
                 });
 
-                function display_winner(winner) {
+                function display_winner(winner, colour) {
+                    var msg;
+                    if (winner === username) {
+                        msg = "YOU WON !!";
+                    }
+                    else {
+                        msg = winner + " won.";
+                    }
+                    $("#winner").text(msg);
+                    $('#server_colour').css('background-color', colour);
+                    $('#server_colour').show();
                 }
             });
         </script>

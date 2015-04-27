@@ -33,16 +33,12 @@
     io.on('connection', function(socket) {
         socket.on('register', function(data) {
             var user = data.username;
-            add_socket_for_user(user, socket);
+            users[user] = socket;
             socket.emit('registered', {'username': user});
         });
         socket.on('guess', function(data) {
-            guesses[data.username] = data.colour;
-            console.log(guesses);
+            guesses[data.colour] = data.username;
         });
-    });
-
-    io.on('disconnect', function(socket) {
     });
 
 
@@ -51,9 +47,6 @@
 
     // map of colour to user
     var guesses = {}; 
-
-    // fake socket returned when a non-existing socket is requested
-    var fake_socket = {emit: function(evt, data){}};
 
 
     // helper functions
@@ -66,21 +59,13 @@
         send_to_all_users('round', {'state':'closed'});
     }
 
-    function add_socket_for_user(user, socket) {
-        users[user] = socket;
-    }
-
-    function get_socket_for_user(user) {
-        return users[user] || fake_socket;
-    }
-
     function send_to(socket, event, data) {
         socket.emit(event, data);
     }
 
     function send_to_all_users(event, data) {
         for (var user in users) {
-            var socket = get_socket_for_user(user);
+            var socket = users[user];
             send_to(socket, event, data);
         }
     }
@@ -91,11 +76,20 @@
         send_to_all_users('result', {winner: winner, colour:colour});
     }
 
-    function choose_color() {
-        return '#' + (Math.random() * 0XFFFFFF << 0).toString(16);
+    function choose_colour() {
+        var colour = '#' + (Math.random() * 0XFFFFFF << 0).toString(16);
+        if (colour.length === 6) colour += "0";
+        return colour;
     }
 
     function who_got_closest(colour) {
+        var colours = [colour];
+        for (var color in guesses) {
+            colours.push(color);
+        }
+        colours.sort();
+        var ind = colours.indexOf(colour);
+        return ind > 0 ? guesses[colours[ind-1]] : 'nobody';
     }
 
 
