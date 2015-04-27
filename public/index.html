@@ -73,7 +73,7 @@
 
                 socket.on('round', function(data) {
                     if (data.state === 'open') {
-                        $('#colour_chooser').spectrum('enable');
+                        reset();
                     }
                     else if (data.state === 'closed') {
                         $('#colour_chooser').spectrum('disable');
@@ -105,6 +105,11 @@
                         socket.emit('register', {'username': username});
                     }
                 });
+
+                function reset() {
+                    $('#colour_chooser').spectrum('enable');
+                    $('#server_colour').hide();
+                }
 
                 function display_winner(winner, colour) {
                     var msg;
