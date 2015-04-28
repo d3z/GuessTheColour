@@ -52,6 +52,7 @@
             <span id="username_lbl"></span>
             <input id="colour_chooser"></input>
         </div>
+        <div id="round_closed">ROUND CLOSED</div>
         <div id="server_colour">
             <div id="winner"></div>
         </div>
@@ -63,12 +64,14 @@
             $(function() {
                 $('#registered_user').hide();
                 $('#server_colour').hide();
+                $('#round_closed').hide();
               
-                var socket = io.connect('http://localhost:4000');
+                var socket = io.connect();
                 socket.on('registered', function(data) {
                     $('#username').hide();
                     $('#username_lbl').text('Make your guess ' + data.username);
                     $('#registered_user').show();
+                    setup(data.currentState);
                 });
 
                 socket.on('round', function(data) {
@@ -76,14 +79,13 @@
                         reset();
                     }
                     else if (data.state === 'closed') {
-                        $('#colour_chooser').spectrum('disable');
+                        close();
                     }
                 });
 
                 socket.on('result', function(data) {
                     var colour = data.colour;
                     var winner = data.winner;
-                    console.log("WINNER", winner, colour);
                     display_winner(winner, colour);
                 });
 
@@ -109,6 +111,17 @@
                 function reset() {
                     $('#colour_chooser').spectrum('enable');
                     $('#server_colour').hide();
+                    $('#round_closed').hide();
+                }
+
+                function close() {
+                    $('#colour_chooser').spectrum('disable');
+                    $('#round_closed').show();
+                }
+
+                function setup(currentState) {
+                    if (currentState === 'open') { reset(); }
+                    else if (currentState === 'closed') { close(); }
                 }
 
                 function display_winner(winner, colour) {

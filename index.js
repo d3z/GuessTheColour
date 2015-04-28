@@ -34,7 +34,7 @@
         socket.on('register', function(data) {
             var user = data.username;
             users[user] = socket;
-            socket.emit('registered', {'username': user});
+            socket.emit('registered', {'username': user, 'currentState': current_state});
         });
         socket.on('guess', function(data) {
             guesses[data.colour] = data.username;
@@ -48,14 +48,19 @@
     // map of colour to user
     var guesses = {}; 
 
+    // current state of play
+    var current_state = 'open';
+
 
     // helper functions
     function start_new_round() {
         guesses = {};
+        current_state = 'open';
         send_to_all_users('round', {'state':'open'});
     }
 
     function close_round() {
+        current_state = 'closed';
         send_to_all_users('round', {'state':'closed'});
     }
 
