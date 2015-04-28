@@ -6,7 +6,8 @@
     var express = require('express');
     var app = express();
     var server = require('http').Server(app);
-    var io = require('socket.io')(server);    
+    var io = require('socket.io')(server);
+    var uuid = require('uuid');
 
     // configure the app
     app.use(express.static(__dirname + '/public'))
@@ -34,7 +35,7 @@
         socket.on('register', function(data) {
             var user = data.username;
             users[user] = socket;
-            socket.emit('registered', {'username': user, 'currentState': current_state});
+            socket.emit('registered', {'username': user, 'currentState': current_state, 'uuid': uuid.v4()});
         });
         socket.on('guess', function(data) {
             guesses[data.colour] = data.username;

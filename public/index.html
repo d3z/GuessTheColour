@@ -21,6 +21,9 @@
             #username_lbl {
                 margin-right: 20px;
             }
+            #username_uuid {
+                font-size: 0.5em;
+            }
             #server_colour {
                 height: 200px;
                 width: 200px;
@@ -51,6 +54,7 @@
         <div id="registered_user">
             <span id="username_lbl"></span>
             <input id="colour_chooser"></input>
+            <div id="username_uuid"></div>
         </div>
         <div id="round_closed">ROUND CLOSED</div>
         <div id="server_colour">
@@ -70,6 +74,7 @@
                 socket.on('registered', function(data) {
                     $('#username').hide();
                     $('#username_lbl').text('Make your guess ' + data.username);
+                    $('#username_uuid').text('(' + data.uuid + ')');
                     $('#registered_user').show();
                     setup(data.currentState);
                 });
