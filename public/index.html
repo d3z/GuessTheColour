@@ -14,6 +14,11 @@
                 font-family: 'Lobster', cursive;
                 margin-bottom: 30px;
             }
+            #failure {
+                font-size: 0.7em;
+                color: red;
+                margin-bottom: 5px;
+            }
             #username_txt {
                 font-size: 1.2em;
                 padding: 10px;
@@ -50,6 +55,7 @@
             <h1>Guess the Colour</h1>
         </header>
         <div id="username">
+            <div id="failure"></div>
             <input id="username_txt" placeholder="Enter a username and press return" size="40" autofocus/>
         </div>
         <div id="registered_user">
@@ -67,6 +73,7 @@
         <script>
             var username;
             $(function() {
+                $('#failure').hide();
                 $('#registered_user').hide();
                 $('#server_colour').hide();
                 $('#round_closed').hide();
@@ -78,6 +85,11 @@
                     $('#username_uuid').text('(' + data.uuid + ')');
                     $('#registered_user').show();
                     setup(data.currentState);
+                });
+
+                socket.on('register_fail', function(data) {
+                    $('#failure').text(data.reason);
+                    $('#failure').show();
                 });
 
                 socket.on('round', function(data) {
