@@ -119,7 +119,7 @@
                     },
                     change: function(color) {
                         var colour = color.toHexString();
-                        socket.emit('guess', {'username': username, 'colour': colour});
+                        socket.emit('guess', {'colour': colour});
                     }
                 });
 

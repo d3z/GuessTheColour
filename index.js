@@ -45,7 +45,7 @@
             }
         });
         socket.on('guess', function(data) {
-            guesses[data.colour] = data.username;
+            guesses[data.colour] = user;
         });
         socket.on('disconnect', function() {
             delete(users[user]);
