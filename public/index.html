@@ -41,6 +41,7 @@
         <script src="bower/jquery/dist/jquery.min.js"></script>
         <script src="bower/spectrum/spectrum.js"></script>
         <link rel="stylesheet" href="bower/spectrum/spectrum.css"/>
+        <script src="bower/jquery-classywiggle/src/js/jquery.classywiggle.js"></script>
         <script src="/socket.io/socket.io.js"></script>
     </head>
 
@@ -94,6 +95,10 @@
                     display_winner(winner, colour);
                 });
 
+                socket.on('winner', function() {
+                    $('#server_colour').ClassyWiggle('start');
+                });
+
                 $('#colour_chooser').spectrum({
                     showButtons: false,
                     move: function(color) {
@@ -115,6 +120,7 @@
 
                 function reset() {
                     $('#colour_chooser').spectrum('enable');
+                    $('#server_colour').ClassyWiggle('stop');
                     $('#server_colour').hide();
                     $('#round_closed').hide();
                 }

@@ -52,6 +52,8 @@
     // current state of play
     var current_state = 'open';
 
+    // fake socket returned when a user doesn't exist
+    var fake_socket = {emit: function() {}};
 
     // helper functions
     function start_new_round() {
@@ -65,6 +67,10 @@
         send_to_all_users('round', {'state':'closed'});
     }
 
+    function get_socket_for_user(user) {
+        return users[user] || fake_socket;
+    }
+
     function send_to(socket, event, data) {
         socket.emit(event, data);
     }
@@ -76,10 +82,16 @@
         }
     }
 
+    function send_to_user(user, event, data) {
+        var socket = get_socket_for_user(user);
+        socket.emit(event, data);
+    }
+
     function send_result_to_all_users() {
         var colour = choose_colour();
         var winner = who_got_closest(colour);
         send_to_all_users('result', {winner: winner, colour:colour});
+        send_to_user(winner, 'winner');
     }
 
     function choose_colour() {
