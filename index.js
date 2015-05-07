@@ -33,15 +33,15 @@
     // handle websocket connections
     io.on('connection', function(socket) {
         var user;
-        socket.on('register', function(data) {
+        socket.on('register', function(data, callback) {
             user = data.username;
             if (get_socket_for_user(user) !== fake_socket) {
                 var reason = '"' + user + '" is already registered';
-                socket.emit('register_fail', {'reason':reason});
+                callback(reason);
             }
             else {
                 users[user] = socket;
-                socket.emit('registered', {'username':user, 'currentState':current_state, 'uuid':uuid.v4()});
+                callback(null, {'username':user, 'currentState':current_state, 'uuid':uuid.v4()});
             }
         });
         socket.on('guess', function(data) {
@@ -57,7 +57,7 @@
     var users = {};
 
     // map of colour to user
-    var guesses = {}; 
+    var guesses = {};
 
     // current state of play
     var current_state = 'open';

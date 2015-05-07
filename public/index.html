@@ -79,18 +79,6 @@
                 $('#round_closed').hide();
               
                 var socket = io.connect();
-                socket.on('registered', function(data) {
-                    $('#username').hide();
-                    $('#username_lbl').text('Make your guess ' + data.username);
-                    $('#username_uuid').text('(' + data.uuid + ')');
-                    $('#registered_user').show();
-                    setup(data.currentState);
-                });
-
-                socket.on('register_fail', function(data) {
-                    $('#failure').text(data.reason);
-                    $('#failure').show();
-                });
 
                 socket.on('round', function(data) {
                     if (data.state === 'open') {
@@ -126,9 +114,25 @@
                 $('#username_txt').keyup(function(event){
                     if (event.which == 13) {
                         username = $(this).val();
-                        socket.emit('register', {'username': username});
+                        socket.emit('register', {'username': username}, handle_registration);
                     }
                 });
+                
+                function handle_registration_error(err) {
+                    $('#failure').text(data.reason);
+                    $('#failure').show();
+                }
+
+                function handle_registration(err, reply) {
+                    if (err) {
+                        return handle_registration_error(err);
+                    }
+                    $('#username').hide();
+                    $('#username_lbl').text('Make your guess ' + reply.username);
+                    $('#username_uuid').text('(' + reply.uuid + ')');
+                    $('#registered_user').show();
+                    setup(reply.currentState);
+                }
 
                 function reset() {
                     $('#colour_chooser').spectrum('enable');
